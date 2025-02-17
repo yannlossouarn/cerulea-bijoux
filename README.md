@@ -39,7 +39,7 @@ The source files have the following setup. Note that not all files are listed he
 │   ├── config/
 │   │   └── navData.json.ts
 │   ├── data/
-│   │   ├── portfolios/
+│   │   ├── creations/
 │   │   ├── testimonials/
 │   │   └──otherPages/
 │   │    config.ts

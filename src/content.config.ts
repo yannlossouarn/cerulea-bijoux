@@ -2,27 +2,28 @@ import { defineCollection, reference, z } from "astro:content";
 import { glob } from "astro/loaders";
 
 // Type-check frontmatter using a schema
-// portfolios
-const portfolios = defineCollection({
+// creations
+const creations = defineCollection({
 	// type: "content",
 	loader: glob({
 		pattern: "**/[^_]*.{md,mdx}",
-		base: "./src/data/portfolios",
+		base: "./src/data/creations",
 	}),
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
 			description: z.string(),
+			cardImage: image(),
 			heroImage: image(),
-			clients: z.array(z.string()),
-			location: z.string(),
+			technique: z.string(),
+			date: z.string(),
 			images: z.array(
 				z.array(image()).refine((arr) => [1, 2, 3].includes(arr.length), {
 					message: "Each sub-array must contain 1, 2, or 3 items",
 				}),
 			),
 			// Transform string to Date object
-			date: z.coerce.date(),
+			// date: z.coerce.date(),
 			order: z.number(),
 			// will be excluded from build if draft is "true"
 			draft: z.boolean().optional(),
@@ -63,7 +64,7 @@ const otherPages = defineCollection({
 });
 
 export const collections = {
-	portfolios,
+	creations,
 	testimonials,
 	otherPages,
 };
