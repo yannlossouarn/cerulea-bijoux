@@ -13,7 +13,7 @@ images:
     [./ban-poissons-bleus.jpg]
 
   ]
-order: 1
+order: 3
 ---
 
 La collection "Comme un poisson dans l'eau" s'agrandit. Après la commande de poissons rouges, est arrivée une commande de petits poissons en marinière bleue. Certains ont trouvé au fond de leur boîte une jolie perle réalisée en gouaché, si précieux en joaillerie ! 
