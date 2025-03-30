@@ -9,7 +9,7 @@ import AutoImport from "astro-auto-import";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://earnest-ganache-dd41ed.netlify.app/",
+	site: "https://cerulea-bijoux.fr/",
 	integrations: [
 		// example auto import component into blog post mdx files
 		AutoImport({

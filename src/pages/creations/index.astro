@@ -1,0 +1,31 @@
+---
+import { getCollection, render } from "astro:content";
+
+// layout
+import BaseLayout from "@layouts/BaseLayout.astro";
+
+// components
+import Contact from "@components/Contact/Contact.astro";
+import CreationsGrid from "@components/Creations/CreationsGrid.astro";
+import TestimonialQuote from "@components/Testimonials/TestimonialQuote.astro";
+
+const creations = await getCollection("creations", ({ data }) => {
+	// filter out draft pages
+	return data.draft !== true;
+});
+---
+
+<BaseLayout title="Créations" description="Quelques exemples de créations">
+	<div class="site-container pt-24 md:pt-36">
+		<div class="mx-auto max-w-6xl text-center">
+			<h1 class="h2 text-pretty uppercase">
+				Des accessoires originaux alliant broderie d'or, argent, pierres naturelles, perles miyuki...	
+			</h1>
+		</div>
+		<CreationsGrid creations={creations} />
+	</div>
+
+	<TestimonialQuote />
+
+	<Contact class="mt-12" />
+</BaseLayout>

@@ -7,6 +7,7 @@ export interface SiteDataProps {
 		name: string;
 		email: string;
 		twitter: string; // used for twitter cards when sharing a blog post on twitter
+		instagram: string;
 	};
 	defaultImage: {
 		src: string;
@@ -16,23 +17,24 @@ export interface SiteDataProps {
 
 // Update this file with your site specific information
 const siteData: SiteDataProps = {
-	name: "Horizon Photography",
+	name: "Cerulea Bijoux",
 	// Your website's title and description (meta fields)
-	title: "Horizon - a beautiful photography website template made with Astro and Tailwind CSS",
+	title: "Cerulea Bijoux - Création de bijoux à la demande",
 	description:
-		"Get your next website up and running quickly with our beautiful website theme designed using Astro and Tailwind CSS. Perfect for freelancers, developers, startups, and personal use.",
+		"Je crée des bijoux et accessoires de mode uniques, à la demande.",
 	useViewTransitions: true,
 	// Your information!
 	author: {
-		name: "Cosmic Themes",
-		email: "creator@cosmicthemes.com",
-		twitter: "Cosmic_Themes",
+		name: "Cerulea Bijoux",
+		email: "contact@cerulea-bijoux.fr",
+		twitter: "ceruleabijoux",
+		instagram: "ceruleabijoux"
 	},
 
 	// default image for meta tags if the page doesn't have an image already
 	defaultImage: {
 		src: "/images/cosmic-themes-logo.jpg",
-		alt: "Cosmic Themes logo",
+		alt: "",
 	},
 };
 

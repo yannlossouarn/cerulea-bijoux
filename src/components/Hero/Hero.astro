@@ -10,8 +10,8 @@ import { Image } from "astro:assets";
 import Button from "@components/Button/Button.astro";
 
 // images
-import heroImage from "@images/hero-bg-min.jpg";
-import heroImageMobile from "@images/hero-bg-min.jpg";
+import heroImage from "@images/hero-bg-agate-min.webp";
+import heroImageMobile from "@images/hero-bg-agate-min.webp";
 ---
 
 <section id="hero" class="relative z-10 flex min-h-[100lvh] w-full">
@@ -22,7 +22,8 @@ import heroImageMobile from "@images/hero-bg-min.jpg";
 		<Image
 			src={heroImage}
 			class="hidden h-auto min-h-full w-full object-cover object-bottom sm:block"
-			alt="wedding"
+			style="filter: brightness(66%)"
+			alt=""
 			aria-hidden="true"
 			loading="eager"
 			height={1400}
@@ -44,13 +45,12 @@ import heroImageMobile from "@images/hero-bg-min.jpg";
 			<h1
 				class="font-heading-1 text-4xl font-semibold text-pretty drop-shadow-[0_2px_2px_rgba(0,0,0,0.4)] md:text-7xl md:leading-tight"
 			>
-				California Wedding Photography
+				Bijoux originaux et création à la demande
 			</h1>
 			<p
 				class="mt-8 text-lg tracking-widest text-pretty drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] md:max-w-[550px] md:text-2xl"
 			>
-				Transform your wedding moments into lasting memories amidst California's majestic
-				landscapes.
+				Uniques ou en petite série, mes créations sont fabriquées avec des matières nobles et inspirées par la beauté de la nature.
 			</p>
 			<div class="mt-10 flex flex-wrap justify-center gap-4 md:justify-start">
 				<Button
@@ -59,7 +59,7 @@ import heroImageMobile from "@images/hero-bg-min.jpg";
 					href="/#contact"
 					class="pl-0 text-xl text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] md:text-3xl"
 				>
-					Get a Quote
+					Envie d'une broche ou d'un collier assorti à une tenue ? Contactez-moi !
 				</Button>
 			</div>
 		</div>

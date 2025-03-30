@@ -15,25 +15,25 @@ interface Props {
 	rest?: any; // catch-all for any additional parameters, such as "aria-label"
 }
 
-const { startStyle = "default", rest } = Astro.props as Props;
+const { startStyle = "white", rest } = Astro.props as Props;
 ---
 
 <div
 	id="nav__container"
-	class="initial fixed top-0 left-0 z-30 flex w-full flex-col py-2 transition-[padding,background-color] duration-300"
+	class="initial fixed top-0 left-0 z-30 flex w-auto flex-col py-2 transition-[padding,background-color] duration-300"
 	transition:name={`nav`}
 	{...rest}
 >
-	<div class="mx-auto flex w-full" class:list={[{ "text-base-900": startStyle === "default" }]}>
+	<div class="flex flex-auto" class:list={[{ "text-base-900": startStyle === "default" }]}>
 		<div class="site-container flex h-16 w-full items-center">
-			<header class="flex w-full items-center gap-2">
+			<header class="flex w-auto justify-between items-center gap-2">
 				<!-- home button / image -->
-				<div class="flex flex-auto justify-start">
-					<SiteLogo />
+				<div class="flex flex-fit justify-start">
+					<SiteLogo startStyle={startStyle} />
 				</div>
 
 				<!-- desktop nav menu -->
-				<div class="flex flex-auto justify-end lg:gap-4">
+				<div class="flex justify-end lg:gap-4">
 					<nav class="hidden md:block">
 						<ul class="flex h-full items-center justify-center px-4 text-lg lg:gap-4">
 							{
@@ -53,10 +53,10 @@ const { startStyle = "default", rest } = Astro.props as Props;
 					<Button
 						variant="secondary"
 						class=`nav__cta py-1 my-auto hidden md:block ${startStyle === "white" ? "data-[scrolled=true]:border-primary-200 data-[scrolled=true]:hover:border-primary-200/80" : "border-primary-200"}`
-						href="https://cosmicthemes.com/themes/horizon/"
+						href="#contact"
 						data-scrolled="false"
 					>
-						Get Horizon
+						Contact
 					</Button>
 
 					<!-- mobile nav menu, only load on small screens where it is visible -->

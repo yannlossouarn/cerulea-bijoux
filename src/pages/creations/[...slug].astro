@@ -1,0 +1,27 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import { type InferGetStaticPropsType } from "astro";
+
+// layout
+import CreationLayout from "@layouts/CreationLayout.astro";
+
+export async function getStaticPaths() {
+	const creations = await getCollection("creations", ({ data }) => {
+		// filter out draft pages
+		return data.draft !== true;
+	});
+
+	return creations.map((creation) => ({
+		params: { slug: creation.id },
+		props: creation,
+	}));
+}
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const creation = Astro.props as Props;
+const { Content } = await render(creation);
+---
+
+<CreationLayout creation={creation}>
+	<Content />
+</CreationLayout>

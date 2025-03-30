@@ -1,0 +1,62 @@
+---
+/**
+ * * These are small cards that are used in the Creations section
+ */
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+
+// components
+import Button from "@components/Button/Button.astro";
+
+interface Props {
+	creation: CollectionEntry<"creations">;
+	direction: "horizontal" | "vertical";
+	noTransitions?: boolean;
+}
+
+const { creation, direction, noTransitions = false } = Astro.props as Props;
+const { title, description, heroImage, cardImage} = creation.data;
+---
+
+<div
+	class:list={[
+		"grid gap-4",
+		{
+			"md:grid-cols-2": direction === "horizontal",
+		},
+	]}
+>
+	<a href={`/creations/${creation.id}`} class="aspect-square overflow-hidden">
+		{
+			noTransitions && (
+				<Image
+					src={cardImage}
+					alt={title}
+					width={450}
+					densities={[1.5, 2, 3]}
+					class="h-auto min-h-full w-full min-w-full object-cover"
+				/>
+			)
+		}
+		{
+			!noTransitions && (
+				<Image
+					src={cardImage}
+					alt={title}
+					width={450}
+					densities={[1.5, 2, 3]}
+					class="h-auto min-h-full w-full min-w-full object-cover"
+					transition:name={`creation-image-${creation.id}`}
+				/>
+			)
+		}
+	</a>
+	<Button variant="ghost" arrow="right" href={`/creations/${creation.id}`} class="pl-0">
+		<div class="flex flex-col justify-between gap-2">
+			<div>
+				<h3 class="h3 text-primary-500 tracking-widest">{title}</h3>
+				<p class="mt-4 lg:text-lg">{description}</p>
+			</div>
+		</div>
+	</Button>
+</div>
