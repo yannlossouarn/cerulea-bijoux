@@ -4,6 +4,7 @@ description: Une collection de broches en broderie d'or déclinables à l'envi.
 heroImage: ./banc-de-poissons-dans-l-eau.jpg
 cardImage: ./banc-de-poissons-dans-l-eau.jpg
 date: "Janvier 2025"
+datePublication: "20250217" # AAAAMMJJ
 technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
 images:
   [

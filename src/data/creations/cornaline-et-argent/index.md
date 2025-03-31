@@ -4,6 +4,7 @@ description: Un collier simple et élégant, associant la brillance de l'argent 
 heroImage: ./collier-cornaline-argent-porte-decoupe2.jpg
 cardImage: ./collier-cornaline-argent-porte-decoupe2.jpg
 date: "Décembre 2024"
+datePublication: "20241210" # AAAAMMJJ
 technique: Cornaline, Argent 925, Inox 304L
 images:
   [

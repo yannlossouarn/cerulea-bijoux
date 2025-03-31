@@ -4,6 +4,7 @@ description: Et voilà un autre ban de poissons ! Cette fois ils sont en marini�
 heroImage: ./ban-poissons-bleus-paysage.jpg
 cardImage: ./ban-poissons-bleus.jpg
 date: "Mars 2025"
+datePublication: "20250331" # AAAAMMJJ
 technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
 images:
   [

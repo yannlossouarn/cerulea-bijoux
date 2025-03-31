@@ -17,6 +17,7 @@ const creations = defineCollection({
 			heroImage: image(),
 			technique: z.string(),
 			date: z.string(),
+			datePublication: z.string(),
 			images: z.array(
 				z.array(image()).refine((arr) => [1, 2, 3].includes(arr.length), {
 					message: "Each sub-array must contain 1, 2, or 3 items",

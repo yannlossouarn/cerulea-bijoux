@@ -4,6 +4,7 @@ description: Pour vous, pour l'être aimé... ou pour chacun ! Un petit coeur pl
 heroImage: ./i-love-pesked.jpg
 cardImage: ./coup-de-coeur-porte.jpg
 date: "Décembre 2024"
+datePublication: "20241215" # AAAAMMJJ
 technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
 images:
   [

@@ -13,10 +13,10 @@ import Button from "@components/Button/Button.astro";
 const creations = await getCollection("creations");
 
 const sortedCreations = creations.sort((a, b) => {
-	if (a.data.order < b.data.order) {
+	if (a.data.datePublication > b.data.datePublication) {
 		return -1;
 	}
-	if (a.data.order > b.data.order) {
+	if (a.data.datePublication < b.data.datePublication) {
 		return 1;
 	}
 	return 0;

@@ -4,6 +4,7 @@ description: Un doux camaïeu de rose et de violet, avec lequel contrastent les 
 heroImage: ./pink-and-punk-carte.jpg
 cardImage: ./pink-and-punk-carte.jpg
 date: "Décembre 2024"
+datePublication: "20241227" # AAAAMMJJ
 technique: Tourmaline, quartz roze, fluorite, argent 925, verre
 images:
   [

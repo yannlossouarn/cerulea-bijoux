@@ -9,9 +9,22 @@ interface Props {
 	noTransitions?: boolean;
 }
 
-const { creations, noTransitions = false } = Astro.props as Props;
+const creations = await getCollection("creations");
+
+const sortedCreations = creations.sort((a, b) => {
+	if (a.data.datePublication > b.data.datePublication) {
+		return -1;
+	}
+	if (a.data.datePublication < b.data.datePublication) {
+		return 1;
+	}
+	return 0;
+});
+
+const {
+	noTransitions = false } = Astro.props as Props;
 ---
 
 <div class="grid gap-x-4 gap-y-10 pt-8 md:grid-cols-3 md:pt-12">
-	{creations.map((creation) => <CreationCard creation={creation} direction="vertical" />)}
+	{sortedCreations.map((creation) => <CreationCard creation={creation} direction="vertical" />)}
 </div>

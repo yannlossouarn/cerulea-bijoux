@@ -4,6 +4,7 @@ description: Une collection de colliers et bracelets chics et faciles à porter,
 heroImage: ./les-indispensables-detail.jpg
 cardImage: ./les-indispensables-carte-tronque-haut.jpg
 date: "Décembre 2024"
+datePublication: "2024123120" # AAAAMMJJ
 technique: Pierre gemme, perles miyuki, inox 304L doré à l'or 18K, perle de cristal preciosa
 images:
   [
