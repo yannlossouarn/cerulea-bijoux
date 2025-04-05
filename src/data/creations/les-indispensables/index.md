@@ -9,6 +9,7 @@ technique: Pierre gemme, perles miyuki, inox 304L doré à l'or 18K, perle de cr
 images:
   [
     [./les-indispensables-carte.jpg],
+    [./les-indispensables-plusieurs.jpg],
   ]
 order: 2
 ---
