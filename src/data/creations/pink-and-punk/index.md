@@ -1,14 +1,14 @@
 ---
 title: Pink and punk
 description: Un doux camaïeu de rose et de violet, avec lequel contrastent les formes brutes des perles.
-heroImage: ./pink-and-punk-carte.jpg
-cardImage: ./pink-and-punk-carte.jpg
+heroImage: ./pink-and-punk-carte.webp
+cardImage: ./pink-and-punk-carte.webp
 date: "Décembre 2024"
 datePublication: "20241227" # AAAAMMJJ
 technique: Tourmaline, quartz roze, fluorite, argent 925, verre
 images:
   [
-    [./pink-and-punk-carte.jpg],
+    [./pink-and-punk-carte.webp],
   ]
 order: 2
 ---

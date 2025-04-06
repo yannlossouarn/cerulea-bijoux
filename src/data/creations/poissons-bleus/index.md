@@ -1,18 +1,15 @@
 ---
 title: Poissons en marinière
 description: Et voilà un autre ban de poissons ! Cette fois ils sont en marinière bleue et un petit rayon orange se promène sur leur flanc.
-heroImage: ./ban-poissons-bleus-paysage.jpg
-cardImage: ./ban-poissons-bleus.jpg
+heroImage: ./ban-poissons-bleus-paysage.webp
+cardImage: ./ban-poissons-bleus.webp
 date: "Mars 2025"
 datePublication: "20250331" # AAAAMMJJ
 technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
 images:
   [
-    [./ban-poissons-boite.jpg, ./ban-poissons-bleus.jpg],
     [./ban-poissons-boite.webp, ./ban-poissons-bleus.webp],
-    [./poissons-bleu-boite.jpg],
     [./poissons-bleu-boite.webp],
-    [./poissons-bleus-1.jpg, ./ban-poissons-wax.jpg],
     [./poissons-bleus-1.webp, ./ban-poissons-wax.webp],
   ]
 order: 3

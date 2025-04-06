@@ -1,15 +1,15 @@
 ---
 title: Comme un poisson dans l'eau
 description: Une collection de broches en broderie d'or déclinables à l'envi.
-heroImage: ./banc-de-poissons-dans-l-eau.jpg
-cardImage: ./banc-de-poissons-dans-l-eau.jpg
+heroImage: ./banc-de-poissons-dans-l-eau.webp
+cardImage: ./banc-de-poissons-dans-l-eau.webp
 date: "Janvier 2025"
 datePublication: "20250217" # AAAAMMJJ
 technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
 images:
   [
-    [./poisson-1.jpg, ./poisson-2.jpg],
-    [./poissons-en-boites.jpg],
+    [./poisson-1.webp, ./poisson-2.webp],
+    [./poissons-en-boites.webp],
   ]
 order: 1
 ---

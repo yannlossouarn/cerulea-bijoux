@@ -1,15 +1,15 @@
 ---
 title: Les Indispensables
 description: Une collection de colliers et bracelets chics et faciles à porter, déclinables à l'infini !
-heroImage: ./les-indispensables-detail.jpg
-cardImage: ./les-indispensables-carte-tronque-haut.jpg
+heroImage: ./les-indispensables-detail.webp
+cardImage: ./les-indispensables-carte-tronque-haut.webp
 date: "Décembre 2024"
 datePublication: "2024123120" # AAAAMMJJ
 technique: Pierre gemme, perles miyuki, inox 304L doré à l'or 18K, perle de cristal preciosa
 images:
   [
-    [./les-indispensables-carte.jpg],
-    [./les-indispensables-plusieurs.jpg],
+    [./les-indispensables-carte.webp],
+    [./les-indispensables-plusieurs.webp],
   ]
 order: 2
 ---

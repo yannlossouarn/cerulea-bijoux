@@ -1,16 +1,16 @@
 ---
 title: Collier cornaline et argent
 description: Un collier simple et élégant, associant la brillance de l'argent à la douceur de la cornaline.
-heroImage: ./collier-cornaline-argent-porte-decoupe2.jpg
-cardImage: ./collier-cornaline-argent-porte-decoupe2.jpg
+heroImage: ./collier-cornaline-argent-porte-decoupe2.webp
+cardImage: ./collier-cornaline-argent-porte-decoupe2.webp
 date: "Décembre 2024"
 datePublication: "20241210" # AAAAMMJJ
 technique: Cornaline, Argent 925, Inox 304L
 images:
   [
-    [./collier-cornaline-argent-porte.jpg],
-    [./collier-cornaline-argent-porte-arriere.jpg],
-    [./collier-cornaline-argent-carte.jpg],
+    [./collier-cornaline-argent-porte.webp],
+    [./collier-cornaline-argent-porte-arriere.webp],
+    [./collier-cornaline-argent-carte.webp],
   ]
 order: 2
 ---

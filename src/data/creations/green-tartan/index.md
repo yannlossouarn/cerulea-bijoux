@@ -1,14 +1,14 @@
 ---
 title: Green Tartan
 description: Un collier réalisé sur commande pour s'assortir avec un pantalon écossais à dominante vert olive et noir.
-heroImage: ./green-tartan-carte.jpg
-cardImage: ./green-tartan-carte.jpg
+heroImage: ./green-tartan-carte.webp
+cardImage: ./green-tartan-carte.webp
 date: "Janvier 2025"
 datePublication: "20250115" # AAAAMMJJ
 technique: Olivine, onyx, grenat, cornaline, quartz rose, cristal preciosa, perles de rocaille, inox 304L doré à l'or 18K, 
 images:
   [
-    [./green-tartan-carte.jpg],
+    [./green-tartan-carte.webp],
   ]
 order: 2
 ---
