@@ -9,9 +9,11 @@ technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
 images:
   [
     [./ban-poissons-boite.jpg, ./ban-poissons-bleus.jpg],
+    [./ban-poissons-boite.webp, ./ban-poissons-bleus.webp],
     [./poissons-bleu-boite.jpg],
-    [./poissons-bleus-1.jpg, ./ban-poissons-wax.jpg]
-
+    [./poissons-bleu-boite.webp],
+    [./poissons-bleus-1.jpg, ./ban-poissons-wax.jpg],
+    [./poissons-bleus-1.webp, ./ban-poissons-wax.webp],
   ]
 order: 3
 ---
