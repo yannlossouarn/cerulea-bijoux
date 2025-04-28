@@ -1,6 +1,6 @@
 ---
 title: Poissons en marinière
-description: Et voilà un autre ban de poissons ! Cette fois ils sont en marinière bleue et un petit rayon orange se promène sur leur flanc.
+description: Et voilà un autre ban de poissons, en marinière bleue avec un petit rayon orange sur le flanc.
 heroImage: ./ban-poissons-bleus-paysage.webp
 cardImage: ./ban-poissons-bleus.webp
 date: "Mars 2025"
