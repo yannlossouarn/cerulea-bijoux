@@ -20,7 +20,7 @@ const { title, description, heroImage, cardImage} = creation.data;
 
 <div
 	class:list={[
-		"grid gap-4",
+		"grid gap-4 bg-neutral-50",
 		{
 			"md:grid-cols-2": direction === "horizontal",
 		},
@@ -50,13 +50,13 @@ const { title, description, heroImage, cardImage} = creation.data;
 				/>
 			)
 		}
-	</a>
+
 	<Button variant="ghost" arrow="right" href={`/creations/${creation.id}`} class="pl-0">
 		<div class="flex flex-col justify-between gap-2">
-			<div>
+
 				<h3 class="h3 text-primary-500 tracking-widest">{title}</h3>
-				<p class="mt-4 lg:text-lg">{description}</p>
-			</div>
+				<p class="mt-4 lg:text-md">{description}</p>
+
 		</div>
 	</Button>
 </div>
