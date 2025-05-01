@@ -42,7 +42,7 @@ const testimonials = defineCollection({
 		z.object({
 			title: z.string(),
 			testimonial: z.string(),
-			image: image(),
+			// image: image(),
 			order: z.number(),
 			// will be excluded from build if draft is "true"
 			draft: z.boolean().optional(),
