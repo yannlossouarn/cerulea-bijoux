@@ -1,6 +1,6 @@
 ---
-title: HANNAH & MARCO
-testimonial: Hiring Jenna was one of the best decisions we made for our wedding. Not only was their work incredibly professional and artistic, but they also made us feel so comfortable and at ease throughout the entire process.
+title: Michèle
+testimonial: Un travail artistique d'une grande finesse avec beaucoup d'attention portée aux détails ! De beaux bijoux à un prix très abordable, idéal pour offrir aux copines. Je recommande chaudement !
 image: ./couple-2-crop.jpg
 order: 1
 ---

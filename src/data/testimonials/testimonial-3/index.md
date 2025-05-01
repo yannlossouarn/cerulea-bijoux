@@ -1,6 +1,6 @@
 ---
-title: BRIAN & KEVIN
-testimonial: Jenna was always available to answer our questions, offer recommendations, and ensure that everything ran smoothly. Her dedication to capturing our love story was evident in every shot, and we are grateful for her beautiful work.
+title: Danièle
+testimonial: Quel plaisir de pouvoir se faire faire un petit bijou ou un accessoire assorti à une tenue ! Catherine a un goût très sûr et elle a toujours de bonnes idées !
 image: ./couple-7-crop.jpg
 order: 1
 ---

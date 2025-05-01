@@ -1,6 +1,6 @@
 ---
-title: JOSÉ & MELANIE
-testimonial: Jenna has a way of making us feel like the only people in the room. The photos she delivered were beyond our expectations, capturing the joy, love, and beauty of our special day in a way that we will treasure forever.
+title: Danièle
+testimonial: Quel plaisir de pouvoir se faire faire un petit bijou ou un accessoire assorti à une tenue ! Catherine a un goût très sûr et elle a toujours de bonnes idées !
 image: ./couple-8-crop.jpg
 order: 1
 ---
