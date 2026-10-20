@@ -1,69 +1,27 @@
 ---
 /**
  * * Pricing cards with three cards
+ * Each card image is a slideshow of examples
  */
 
 import { Image } from "astro:assets";
-import { Icon } from "astro-icon/components";
 
 // components
 import Button from "@components/Button/Button.astro";
 
-interface pricingItem {
-	name: string; // plan name
-	featured?: boolean; // if true, will be highlighted or otherwise featured
-	price: number;
-	features: string[]; // list of features
-	image: ImageMetadata; // imported image
-}
+// data
+import pricingData from "@config/pricingData.json";
 
-import image1 from "@assets/images/couple-5-min.jpg";
-import image2 from "@assets/images/couple-6-crop.jpg";
-import image3 from "@assets/images/couple-1-square.jpg";
-
-// This is designed for 3 pricing items, but can be modified to support more
-const pricingData: pricingItem[] = [
-	{
-		name: "Elopement",
-		featured: false,
-		price: 1999,
-		features: [
-			"200+ Professionally Edited Photos",
-			"Private Online Gallery",
-			"*Additional Charge Based On Travel Distance",
-			"*Additional Charge For Videography",
-		],
-		image: image1,
-	},
-	{
-		name: "Wedding",
-		featured: true,
-		price: 2999,
-		features: [
-			"300+ Professionally Edited Photos",
-			"Private Online Gallery",
-			"All-Day Photography Coverage",
-			"*Additional Charge For Videography",
-		],
-		image: image2,
-	},
-	{
-		name: "Engagement",
-		featured: false,
-		price: 799,
-		features: [
-			"100+ Professionally Edited Photos",
-			"Private Online Gallery",
-			"*Additional Charge Based On Travel Distance",
-		],
-		image: image3,
-	},
-];
+const priceFormatter = new Intl.NumberFormat("fr-FR", {
+	style: "currency",
+	currency: "EUR",
+	minimumFractionDigits: 0,
+});
 ---
 
-<section id="pricing" class="mx-auto max-w-6xl scroll-mt-10 px-4 py-8 md:py-12">
+<section id="tarifs" class="mx-auto max-w-6xl scroll-mt-10 px-4 py-8 md:py-12">
 	<div class="mx-auto max-w-6xl text-center">
-		<h2 class="h2 text-pretty uppercase">Photography Packages</h2>
+		<h2 class="h2 text-pretty uppercase">Tarifs</h2>
 	</div>
 
 	<!-- works for 3 pricing plans, adjust grid cols here to support more or less -->
@@ -71,7 +29,7 @@ const pricingData: pricingItem[] = [
 		class="mx-auto grid w-full max-w-md gap-12 pt-8 sm:max-w-none sm:grid-cols-2 md:pt-12 lg:grid-cols-3"
 	>
 		{
-			pricingData.map((plan) => (
+			pricingData.map((plan, planIndex) => (
 				<div
 					class="flex w-full flex-col"
 					class:list={[
@@ -80,18 +38,40 @@ const pricingData: pricingItem[] = [
 						},
 					]}
 				>
-					<div>
-						<div class="aspect-[3/4] h-auto w-full overflow-hidden">
+					<div
+						class="pricing__slideshow relative aspect-[3/4] h-auto w-full shrink-0 overflow-hidden"
+						data-slideshow
+						data-slideshow-delay={planIndex * 1300}
+					>
+						{plan.images.map((image, imageIndex) => (
 							<Image
-								src={plan.image}
-								alt={plan.name}
+								src={image.src}
+								alt={image.alt}
 								width={450}
 								densities={[1.5, 2]}
-								class="h-full w-full object-cover"
+								class="pricing__slide absolute inset-0 h-full w-full object-cover"
+								data-slide
+								data-active={imageIndex === 0 ? "true" : "false"}
 							/>
-						</div>
+						))}
+
+						{plan.images.length > 1 && (
+							<div class="absolute inset-x-0 bottom-0 z-10 flex justify-center gap-1 bg-gradient-to-t from-black/40 to-transparent pt-8 pb-2">
+								{plan.images.map((image, imageIndex) => (
+									<button
+										type="button"
+										class="pricing__dot flex size-6 items-center justify-center"
+										data-slide-dot
+										data-active={imageIndex === 0 ? "true" : "false"}
+										aria-label={`${plan.name} : photo ${imageIndex + 1} sur ${plan.images.length}`}
+									>
+										<span class="block size-2 rounded-full bg-white transition-opacity" />
+									</button>
+								))}
+							</div>
+						)}
 					</div>
-					<div class="border-primary-200 flex h-full flex-col justify-between border-2 border-t-0 pt-10 pb-10">
+					<div class="border-primary-200 flex flex-1 flex-col justify-between border-2 border-t-0 pt-10 pb-10">
 						<div>
 							<h3 class="h2 text-center">{plan.name}</h3>
 
@@ -101,10 +81,16 @@ const pricingData: pricingItem[] = [
 								))}
 							</ul>
 						</div>
-						<p class="font-decorative text-base-800 mt-6 flex justify-center text-center text-[5rem] leading-none">
-							${plan.price}
-							<span class="flex h-full text-[3.5rem]">+</span>
-						</p>
+						{plan.price !== undefined ? (
+							<p class="text-base-800 mt-6 flex flex-col items-center text-center">
+								{plan.startingAt && <span class="h3 text-primary-500">À partir de</span>}
+								<span class="font-decorative mt-2 text-[4.5rem] leading-none">
+									{priceFormatter.format(plan.price)}
+								</span>
+							</p>
+						) : (
+							<p class="h3 text-primary-500 mt-6 text-center">Prix sur demande</p>
+						)}
 					</div>
 				</div>
 			))
@@ -112,6 +98,96 @@ const pricingData: pricingItem[] = [
 	</div>
 
 	<div class="mt-12 flex justify-center">
-		<Button href="/#contact" variant="outline" class="px-8">Get a quote</Button>
+		<Button href="/#contact" variant="outline" class="px-8">Contactez-moi</Button>
 	</div>
 </section>
+
+<script>
+	const SLIDE_DURATION = 4000; // ms
+
+	let timers: number[] = [];
+
+	function initSlideshow(slideshow: HTMLElement) {
+		const slides = Array.from(slideshow.querySelectorAll<HTMLElement>("[data-slide]"));
+		const dots = Array.from(slideshow.querySelectorAll<HTMLElement>("[data-slide-dot]"));
+		if (slides.length < 2) return;
+
+		let current = 0;
+		let paused = false;
+
+		function show(index: number) {
+			current = (index + slides.length) % slides.length;
+			slides.forEach((slide, i) => (slide.dataset.active = String(i === current)));
+			dots.forEach((dot, i) => (dot.dataset.active = String(i === current)));
+		}
+
+		dots.forEach((dot, i) => dot.addEventListener("click", () => show(i)));
+
+		// pause while the visitor is looking at, or interacting with, the slideshow
+		slideshow.addEventListener("mouseenter", () => (paused = true));
+		slideshow.addEventListener("mouseleave", () => (paused = false));
+		slideshow.addEventListener("focusin", () => (paused = true));
+		slideshow.addEventListener("focusout", () => (paused = false));
+
+		// no autoplay for visitors who prefer reduced motion, the dots still work
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+		// each card starts with a different delay so the three cards don't change at the same time
+		const delay = Number(slideshow.dataset.slideshowDelay) || 0;
+		timers.push(
+			window.setTimeout(() => {
+				timers.push(
+					window.setInterval(() => {
+						if (!paused && !document.hidden) show(current + 1);
+					}, SLIDE_DURATION),
+				);
+			}, delay),
+		);
+	}
+
+	function initSlideshows() {
+		timers.forEach((timer) => {
+			window.clearTimeout(timer);
+			window.clearInterval(timer);
+		});
+		timers = [];
+
+		document.querySelectorAll<HTMLElement>("[data-slideshow]").forEach((slideshow) => {
+			// avoid adding listeners twice to the same element
+			if (slideshow.dataset.slideshowReady === "true") return;
+			slideshow.dataset.slideshowReady = "true";
+			initSlideshow(slideshow);
+		});
+	}
+
+	// runs on initial page load
+	initSlideshows();
+
+	// runs on view transitions navigation
+	document.addEventListener("astro:after-swap", initSlideshows);
+</script>
+
+<style>
+	.pricing__slide {
+		opacity: 0;
+		transition: opacity 1s ease-in-out;
+	}
+
+	.pricing__slide[data-active="true"] {
+		opacity: 1;
+	}
+
+	.pricing__dot span {
+		opacity: 0.5;
+	}
+
+	.pricing__dot[data-active="true"] span {
+		opacity: 1;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.pricing__slide {
+			transition: none;
+		}
+	}
+</style>

@@ -21,11 +21,11 @@ const navConfig: navItem[] = [
 		text: "Créations",
 		link: "/creations",
 	},
-	/*
 	{
-		text: "Pricing",
-		link: "/#pricing",
+		text: "Tarifs",
+		link: "/#tarifs",
 	},
+	/*
 	{
 		text: "Pages",
 		dropdown: [
