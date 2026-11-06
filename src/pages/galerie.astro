@@ -1,0 +1,107 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import { Image, getImage } from "astro:assets";
+
+import BaseLayout from "@layouts/BaseLayout.astro";
+import Button from "@components/Button/Button.astro";
+import Contact from "@components/Contact/Contact.astro";
+
+const INSTAGRAM_URL = "https://www.instagram.com/ceruleabijoux/";
+const INSTAGRAM_ID = "17841470840190885"; // compte @ceruleabijoux (identifiant public)
+
+// 1. entrées ajoutées à la main (src/data/galerie) : chacune renvoie vers sa création
+const entrees = (await getCollection("galerie", ({ data }) => data.draft !== true)).sort(
+	(a, b) => a.data.order - b.data.order,
+);
+const tuilesManuelles = await Promise.all(
+	entrees.map(async (entree) => {
+		const creation = await getEntry(entree.data.creation);
+		return {
+			image: entree.data.image ?? creation.data.cardImage,
+			alt: entree.data.alt ?? creation.data.title,
+			lien: `/creations/${creation.id}/`,
+		};
+	}),
+);
+
+// 2. dernières publications Instagram, lues au build avec le token de Page (variable d'environnement, jamais exposée)
+// ponytail: le flux n'est mis à jour qu'à chaque build ; prévoir un build planifié sur Netlify si besoin.
+async function publicationsInstagram() {
+	const token = import.meta.env.INSTAGRAM_TOKEN;
+	if (!token) return [];
+	try {
+		const url = `https://graph.facebook.com/v21.0/${INSTAGRAM_ID}/media?fields=caption,media_type,media_url,thumbnail_url,permalink&limit=24&access_token=${encodeURIComponent(token)}`;
+		const reponse = await (await fetch(url)).json();
+		if (!Array.isArray(reponse.data)) throw new Error(reponse.error?.message ?? "réponse invalide");
+		const tuiles = await Promise.all(
+			reponse.data.map(async (m: any) => {
+				const source = m.media_type === "VIDEO" ? m.thumbnail_url : m.media_url;
+				if (!source || !m.permalink) return null;
+				try {
+					// téléchargée et optimisée au build : les URL du CDN Instagram expirent au bout de quelques jours
+					const image = await getImage({ src: source, inferSize: true, width: 600 });
+					const legende = (m.caption ?? "").replace(/\s+/g, " ").trim().slice(0, 120);
+					return { src: image.src, alt: legende || "Publication Instagram de Cerulea Bijoux", lien: m.permalink };
+				} catch {
+					return null;
+				}
+			}),
+		);
+		return tuiles.filter((t) => t !== null);
+	} catch (e) {
+		console.warn(`[galerie] flux Instagram indisponible : ${(e as Error).message}`);
+		return [];
+	}
+}
+const tuilesInstagram = await publicationsInstagram();
+---
+
+<BaseLayout title="Galerie" description="Les créations Cerulea Bijoux en images">
+	<div class="site-container pt-24 md:pt-36">
+		<h1 class="h2 text-center uppercase">Galerie</h1>
+		<p class="description mt-6 text-center md:text-lg">Mes créations en images, et les dernières nouvelles d'Instagram.</p>
+
+		<ul class="mx-auto mt-12 grid max-w-6xl grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
+			{
+				tuilesManuelles.map((t) => (
+					<li>
+						<a href={t.lien} class="group block aspect-square overflow-hidden bg-primary-100">
+							<Image
+								src={t.image}
+								alt={t.alt}
+								width={600}
+								class="h-full w-full object-cover transition group-hover:opacity-80"
+							/>
+						</a>
+					</li>
+				))
+			}
+			{
+				tuilesInstagram.map((t) => (
+					<li>
+						<a
+							href={t.lien}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="group block aspect-square overflow-hidden bg-primary-100"
+						>
+							<img
+								src={t.src}
+								alt={t.alt}
+								loading="lazy"
+								decoding="async"
+								class="h-full w-full object-cover transition group-hover:opacity-80"
+							/>
+						</a>
+					</li>
+				))
+			}
+		</ul>
+
+		<div class="mt-10 text-center">
+			<Button href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">Suivre @ceruleabijoux</Button>
+		</div>
+	</div>
+
+	<Contact class="mt-12" />
+</BaseLayout>

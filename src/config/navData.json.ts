@@ -25,6 +25,10 @@ const navConfig: navItem[] = [
 		text: "Tarifs",
 		link: "/#tarifs",
 	},
+	{
+		text: "Galerie",
+		link: "/galerie",
+	},
 	/*
 	{
 		text: "Pages",

@@ -10,6 +10,12 @@ import AutoImport from "astro-auto-import";
 // https://astro.build/config
 export default defineConfig({
 	site: "https://cerulea-bijoux.fr/",
+	// listen on IPv4 and IPv6 so that http://localhost:4321/ works in every browser
+	server: { host: true },
+	// vignettes Instagram de la galerie : téléchargées au build (les URL du CDN sont signées et expirent)
+	image: {
+		remotePatterns: [{ hostname: "**.cdninstagram.com" }, { hostname: "**.fbcdn.net" }],
+	},
 	integrations: [
 		// example auto import component into blog post mdx files
 		AutoImport({

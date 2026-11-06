@@ -49,6 +49,22 @@ const testimonials = defineCollection({
 		}),
 });
 
+// galerie : images ajoutées à la main, chacune liée à une création (image facultative : à défaut, celle de la création)
+const galerie = defineCollection({
+	loader: glob({
+		pattern: "**/[^_]*.{md,mdx}",
+		base: "./src/data/galerie",
+	}),
+	schema: ({ image }) =>
+		z.object({
+			creation: reference("creations"),
+			image: image().optional(),
+			alt: z.string().optional(),
+			order: z.number(),
+			draft: z.boolean().optional(),
+		}),
+});
+
 // other pages
 const otherPages = defineCollection({
 	// type: "content",
@@ -68,4 +84,5 @@ export const collections = {
 	creations,
 	testimonials,
 	otherPages,
+	galerie,
 };

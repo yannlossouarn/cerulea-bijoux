@@ -24,7 +24,7 @@ interface Props {
 import headerImage from "@images/creation-header-crop-min.jpg";
 
 const { creation } = Astro.props as Props;
-const { title, description, date, images, technique, heroImage } = creation.data;
+const { title, description, images, technique, heroImage } = creation.data;
 
 // find other creations to show later down the page
 const otherCreations = await getCollection("creations", (otherCreation) => {
@@ -84,13 +84,6 @@ const otherCreations = await getCollection("creations", (otherCreation) => {
 			class="h3 text-primary-500 mt-10 flex flex-col items-center justify-center gap-x-3 gap-y-1 tracking-widest md:flex-row"
 		>
 			<span>{technique}</span>
-		</h2>
-
-		<!-- people and location -->
-		<h2
-			class="h3 text-primary-500 mt-10 flex flex-col items-center justify-center gap-x-3 gap-y-1 tracking-widest md:flex-row"
-		>
-			<span>{date}</span>
 		</h2>
 
 		<!-- slot really only fuctions as a longer description -->
