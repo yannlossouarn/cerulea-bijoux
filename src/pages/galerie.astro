@@ -1,13 +1,14 @@
 ---
 import { getCollection, getEntry } from "astro:content";
 import { Image, getImage } from "astro:assets";
+import { Icon } from "astro-icon/components";
 
 import BaseLayout from "@layouts/BaseLayout.astro";
 import Button from "@components/Button/Button.astro";
 import Contact from "@components/Contact/Contact.astro";
+import { fluxInstagram, type Media } from "@js/instagram";
 
 const INSTAGRAM_URL = "https://www.instagram.com/ceruleabijoux/";
-const INSTAGRAM_ID = "17841470840190885"; // compte @ceruleabijoux (identifiant public)
 
 // 1. entrées ajoutées à la main (src/data/galerie) : chacune renvoie vers sa création
 const entrees = (await getCollection("galerie", ({ data }) => data.draft !== true)).sort(
@@ -24,48 +25,86 @@ const tuilesManuelles = await Promise.all(
 	}),
 );
 
-// 2. dernières publications Instagram, lues au build avec le token de Page (variable d'environnement, jamais exposée)
-// ponytail: le flux n'est mis à jour qu'à chaque build ; prévoir un build planifié sur Netlify si besoin.
-async function publicationsInstagram() {
-	const token = import.meta.env.INSTAGRAM_TOKEN;
-	if (!token) return [];
+// 2. profil et publications Instagram, lus au build ; toutes les images sont téléchargées dans le site
+// (les URL du CDN Instagram expirent). ponytail: likes, commentaires et nouvelles publications ne sont à jour qu'au dernier build.
+const profil = await fluxInstagram();
+
+async function locale(src: string | undefined, width: number) {
+	if (!src) return null;
 	try {
-		const url = `https://graph.facebook.com/v21.0/${INSTAGRAM_ID}/media?fields=caption,media_type,media_url,thumbnail_url,permalink&limit=24&access_token=${encodeURIComponent(token)}`;
-		const reponse = await (await fetch(url)).json();
-		if (!Array.isArray(reponse.data)) throw new Error(reponse.error?.message ?? "réponse invalide");
-		const tuiles = await Promise.all(
-			reponse.data.map(async (m: any) => {
-				const source = m.media_type === "VIDEO" ? m.thumbnail_url : m.media_url;
-				if (!source || !m.permalink) return null;
-				try {
-					// téléchargée et optimisée au build : les URL du CDN Instagram expirent au bout de quelques jours
-					const image = await getImage({ src: source, inferSize: true, width: 600 });
-					const legende = (m.caption ?? "").replace(/\s+/g, " ").trim().slice(0, 120);
-					return { src: image.src, alt: legende || "Publication Instagram de Cerulea Bijoux", lien: m.permalink };
-				} catch {
-					return null;
-				}
-			}),
-		);
-		return tuiles.filter((t) => t !== null);
-	} catch (e) {
-		console.warn(`[galerie] flux Instagram indisponible : ${(e as Error).message}`);
-		return [];
+		return (await getImage({ src, inferSize: true, width })).src;
+	} catch {
+		return null;
 	}
 }
-const tuilesInstagram = await publicationsInstagram();
+
+async function diapositives(m: Media) {
+	if (m.media_type === "VIDEO") {
+		const poster = await locale(m.thumbnail_url, 1080);
+		return poster ? [{ image: poster, video: `/galerie/media/${m.id}.mp4` }] : [];
+	}
+	// ponytail: les vidéos à l'intérieur d'un carrousel sont montrées par leur image de couverture
+	const sources = m.media_type === "CAROUSEL_ALBUM" ? (m.children?.data ?? []) : [m];
+	const images = await Promise.all(
+		sources.map((s) => locale(s.media_type === "VIDEO" ? s.thumbnail_url : s.media_url, 1080)),
+	);
+	return images.filter((i) => i !== null).map((image) => ({ image, video: null }));
+}
+
+const publications = (
+	await Promise.all(
+		(profil?.media?.data ?? []).map(async (m) => {
+			const vignette = await locale(m.media_type === "VIDEO" ? m.thumbnail_url : m.media_url, 600);
+			const slides = await diapositives(m);
+			if (!vignette || !slides.length) return null;
+			return { ...m, vignette, slides, legende: (m.caption ?? "").trim() };
+		}),
+	)
+).filter((p) => p !== null);
+
+const avatar = await locale(profil?.profile_picture_url, 160);
+const lignes = (t: string) => t.split("\n");
+const nombre = (n?: number) => new Intl.NumberFormat("fr-FR").format(n ?? 0);
+const dateLongue = (iso: string) =>
+	new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 ---
 
 <BaseLayout title="Galerie" description="Les créations Cerulea Bijoux en images">
 	<div class="site-container pt-24 md:pt-36">
 		<h1 class="h2 text-center uppercase">Galerie</h1>
-		<p class="description mt-6 text-center md:text-lg">Mes créations en images, et les dernières nouvelles d'Instagram.</p>
 
-		<ul class="mx-auto mt-12 grid max-w-6xl grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
+		{
+			profil && (
+				<header class="mx-auto mt-10 flex max-w-6xl items-start gap-5 md:gap-8">
+					{avatar && (
+						<img src={avatar} alt="" width="80" height="80" class="size-16 shrink-0 rounded-full md:size-20" />
+					)}
+					<div class="min-w-0">
+						<a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" class="text-xl md:text-2xl">
+							{profil.username}
+						</a>
+						<p class="mt-1 flex flex-wrap gap-x-6 text-sm md:text-base">
+							<span><strong>{nombre(profil.media_count)}</strong> publications</span>
+							<span><strong>{nombre(profil.followers_count)}</strong> abonnés</span>
+							<span><strong>{nombre(profil.follows_count)}</strong> abonnements</span>
+						</p>
+						{profil.name && <p class="mt-3 font-semibold">{profil.name}</p>}
+						{profil.biography && <p>{lignes(profil.biography).map((l, i) => <>{i > 0 && <br />}{l}</>)}</p>}
+						{profil.website && (
+							<a href={profil.website} class="text-primary-500 break-all underline">
+								{profil.website}
+							</a>
+						)}
+					</div>
+				</header>
+			)
+		}
+
+		<ul class="mx-auto mt-10 grid max-w-6xl grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
 			{
 				tuilesManuelles.map((t) => (
 					<li>
-						<a href={t.lien} class="group block aspect-square overflow-hidden bg-primary-100">
+						<a href={t.lien} class="group bg-primary-100 block aspect-square overflow-hidden">
 							<Image
 								src={t.image}
 								alt={t.alt}
@@ -77,22 +116,28 @@ const tuilesInstagram = await publicationsInstagram();
 				))
 			}
 			{
-				tuilesInstagram.map((t) => (
+				publications.map((p, i) => (
 					<li>
-						<a
-							href={t.lien}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="group block aspect-square overflow-hidden bg-primary-100"
+						<button
+							type="button"
+							data-galerie-ouvrir={i}
+							aria-label={`Voir la publication Instagram du ${dateLongue(p.timestamp)}`}
+							class="group bg-primary-100 relative block aspect-square w-full cursor-pointer overflow-hidden"
 						>
 							<img
-								src={t.src}
-								alt={t.alt}
+								src={p.vignette}
+								alt={p.legende.slice(0, 120)}
 								loading="lazy"
 								decoding="async"
 								class="h-full w-full object-cover transition group-hover:opacity-80"
 							/>
-						</a>
+							{p.media_type !== "IMAGE" && (
+								<Icon
+									name={p.media_type === "VIDEO" ? "tabler:movie" : "tabler:box-multiple"}
+									class="absolute top-2 right-2 size-6 text-white drop-shadow"
+								/>
+							)}
+						</button>
 					</li>
 				))
 			}
@@ -103,5 +148,292 @@ const tuilesInstagram = await publicationsInstagram();
 		</div>
 	</div>
 
+	{
+		profil && publications.length > 0 && (
+			<dialog id="galerie-modale" class="galerie-modale" aria-label="Publication Instagram">
+				<button type="button" data-galerie-fermer class="galerie-modale__fermer" aria-label="Fermer">
+					<Icon name="tabler:x" class="size-8" />
+				</button>
+				<button type="button" data-galerie-pas="-1" class="galerie-modale__nav left-2" aria-label="Publication précédente">
+					<Icon name="tabler:chevron-left" class="size-10" />
+				</button>
+				<button type="button" data-galerie-pas="1" class="galerie-modale__nav right-2" aria-label="Publication suivante">
+					<Icon name="tabler:chevron-right" class="size-10" />
+				</button>
+
+				{publications.map((p, i) => (
+					<article data-galerie-publication={i} hidden class="galerie-modale__contenu">
+						<div class="galerie-modale__media">
+							<div class="galerie-modale__diapos" data-galerie-diapos>
+								{p.slides.map((s) =>
+									s.video ? (
+										<div class="galerie-modale__diapo">
+											<video src={s.video} poster={s.image} muted loop playsinline preload="none" />
+											<button type="button" data-galerie-son class="galerie-modale__son" aria-label="Activer le son">
+												<Icon name="tabler:volume-off" class="size-5" data-son-coupe />
+												<Icon name="tabler:volume" class="hidden size-5" data-son-actif />
+											</button>
+										</div>
+									) : (
+										<div class="galerie-modale__diapo">
+											<img src={s.image} alt={p.legende.slice(0, 120)} loading="lazy" decoding="async" />
+										</div>
+									),
+								)}
+							</div>
+							{p.slides.length > 1 && (
+								<>
+									<button type="button" data-galerie-diapo="-1" class="galerie-modale__diapo-nav left-2" aria-label="Image précédente">
+										<Icon name="tabler:chevron-left" class="size-6" />
+									</button>
+									<button type="button" data-galerie-diapo="1" class="galerie-modale__diapo-nav right-2" aria-label="Image suivante">
+										<Icon name="tabler:chevron-right" class="size-6" />
+									</button>
+								</>
+							)}
+						</div>
+
+						<aside class="galerie-modale__panneau">
+							<div class="galerie-modale__entete">
+								{avatar && <img src={avatar} alt="" width="40" height="40" class="size-10 rounded-full" />}
+								<div class="min-w-0 flex-1">
+									<p class="font-semibold">{profil.username}</p>
+									<time datetime={p.timestamp} class="text-sm text-base-500">{dateLongue(p.timestamp)}</time>
+								</div>
+								<a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Compte Instagram @ceruleabijoux">
+									<Icon name="socials/basil-instagram-solid" class="size-7" />
+								</a>
+							</div>
+
+							<div class="galerie-modale__texte">
+								{p.legende && (
+									<div>
+										<p><strong>{profil.username}</strong> {lignes(p.legende).map((l, i) => <>{i > 0 && <br />}{l}</>)}</p>
+										<time datetime={p.timestamp} class="text-sm text-base-500">{dateLongue(p.timestamp)}</time>
+									</div>
+								)}
+								{/* Meta ne communique pas l'auteur des commentaires : seul le texte est affiché */}
+								{(p.comments?.data ?? []).map((c) => (
+									<div class="mt-4">
+										<p>{lignes(c.text).map((l, i) => <>{i > 0 && <br />}{l}</>)}</p>
+										<time datetime={c.timestamp} class="text-sm text-base-500">{dateLongue(c.timestamp)}</time>
+										{(c.replies?.data ?? []).map((r) => (
+											<div class="mt-2 ml-6">
+												<p>{lignes(r.text).map((l, i) => <>{i > 0 && <br />}{l}</>)}</p>
+												<time datetime={r.timestamp} class="text-sm text-base-500">{dateLongue(r.timestamp)}</time>
+											</div>
+										))}
+									</div>
+								))}
+								<a href={p.permalink} target="_blank" rel="noopener noreferrer" class="text-primary-500 mt-6 block text-sm underline">
+									Voir sur Instagram
+								</a>
+							</div>
+
+							<div class="galerie-modale__pied">
+								{p.like_count !== undefined && (
+									<span class="flex items-center gap-1"><Icon name="tabler:heart" class="size-5" /> {nombre(p.like_count)} j'aime</span>
+								)}
+								<span class="flex items-center gap-1"><Icon name="tabler:message-circle" class="size-5" /> {nombre(p.comments_count)} commentaire{(p.comments_count ?? 0) > 1 ? "s" : ""}</span>
+							</div>
+						</aside>
+					</article>
+				))}
+			</dialog>
+		)
+	}
+
 	<Contact class="mt-12" />
 </BaseLayout>
+
+<script>
+	// relatif à « maintenant » côté navigateur (le HTML contient la date absolue en repli)
+	function relatif(iso: string) {
+		const rtf = new Intl.RelativeTimeFormat("fr", { numeric: "auto" });
+		const s = (new Date(iso).getTime() - Date.now()) / 1000;
+		const unites: [Intl.RelativeTimeFormatUnit, number][] = [["year", 31536000], ["month", 2592000], ["week", 604800], ["day", 86400], ["hour", 3600], ["minute", 60]];
+		for (const [u, d] of unites) if (Math.abs(s) >= d) return rtf.format(Math.round(s / d), u);
+		return "à l'instant";
+	}
+
+	function initGalerie() {
+		const modale = document.querySelector<HTMLDialogElement>("#galerie-modale");
+		if (!modale) return;
+		const publications = [...modale.querySelectorAll<HTMLElement>("[data-galerie-publication]")];
+		let courante = 0;
+
+		modale.querySelectorAll<HTMLTimeElement>("time[datetime]").forEach((t) => (t.textContent = relatif(t.dateTime)));
+
+		const arreter = () => modale.querySelectorAll("video").forEach((v) => v.pause());
+		const afficher = (i: number) => {
+			arreter();
+			courante = (i + publications.length) % publications.length;
+			publications.forEach((p, n) => (p.hidden = n !== courante));
+			const video = publications[courante].querySelector("video");
+			// après une navigation par le routeur d'Astro, les vidéos insérées sont en erreur : on recharge leur source
+			if (video?.error) video.load();
+			video?.play().catch(() => {});
+		};
+
+		document.querySelectorAll<HTMLElement>("[data-galerie-ouvrir]").forEach((b) =>
+			b.addEventListener("click", () => {
+				modale.showModal(); // avant afficher() : une vidéo dans une modale fermée ne démarre pas
+				afficher(Number(b.dataset.galerieOuvrir));
+			}),
+		);
+		modale.querySelector("[data-galerie-fermer]")?.addEventListener("click", () => modale.close());
+		modale.querySelectorAll<HTMLElement>("[data-galerie-pas]").forEach((b) =>
+			b.addEventListener("click", () => afficher(courante + Number(b.dataset.galeriePas))),
+		);
+		modale.addEventListener("click", (e) => e.target === modale && modale.close());
+		modale.addEventListener("close", arreter);
+		modale.addEventListener("keydown", (e) => {
+			if (e.key === "ArrowRight") afficher(courante + 1);
+			if (e.key === "ArrowLeft") afficher(courante - 1);
+		});
+		modale.querySelectorAll<HTMLElement>("[data-galerie-diapo]").forEach((b) =>
+			b.addEventListener("click", () => {
+				const diapos = b.parentElement!.querySelector<HTMLElement>("[data-galerie-diapos]")!;
+				diapos.scrollBy({ left: Number(b.dataset.galerieDiapo) * diapos.clientWidth, behavior: "smooth" });
+			}),
+		);
+		modale.querySelectorAll<HTMLElement>("[data-galerie-son]").forEach((b) =>
+			b.addEventListener("click", () => {
+				const video = b.parentElement!.querySelector("video")!;
+				video.muted = !video.muted;
+				b.setAttribute("aria-label", video.muted ? "Activer le son" : "Couper le son");
+				b.querySelector("[data-son-coupe]")!.classList.toggle("hidden", !video.muted);
+				b.querySelector("[data-son-actif]")!.classList.toggle("hidden", video.muted);
+			}),
+		);
+	}
+
+	// le site utilise le routeur côté client : astro:page-load se déclenche au premier chargement et après chaque navigation
+	document.addEventListener("astro:page-load", initGalerie);
+</script>
+
+<style>
+	.galerie-modale {
+		max-width: none;
+		max-height: none;
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		border: 0;
+		background: transparent;
+	}
+	.galerie-modale::backdrop {
+		background: rgb(0 0 0 / 0.75);
+	}
+	.galerie-modale[open] {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.galerie-modale__fermer {
+		position: fixed;
+		top: 0.75rem;
+		right: 0.75rem;
+		z-index: 2;
+		color: white;
+	}
+	.galerie-modale__nav {
+		position: fixed;
+		top: 50%;
+		translate: 0 -50%;
+		z-index: 2;
+		color: white;
+	}
+	.galerie-modale__contenu {
+		display: flex;
+		flex-direction: column;
+		width: min(100% - 6rem, 64rem);
+		max-height: calc(100% - 4rem);
+		background: white;
+		overflow: auto;
+	}
+	.galerie-modale__contenu[hidden] {
+		display: none;
+	}
+	.galerie-modale__media {
+		position: relative;
+		background: black;
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+	.galerie-modale__diapos {
+		display: flex;
+		height: 100%;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+	}
+	.galerie-modale__diapo {
+		position: relative;
+		flex: 0 0 100%;
+		scroll-snap-align: center;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.galerie-modale__diapo :is(img, video) {
+		max-width: 100%;
+		max-height: 60svh;
+		object-fit: contain;
+	}
+	.galerie-modale__son {
+		position: absolute;
+		right: 0.75rem;
+		bottom: 0.75rem;
+		padding: 0.4rem;
+		border-radius: 9999px;
+		background: rgb(0 0 0 / 0.6);
+		color: white;
+	}
+	.galerie-modale__diapo-nav {
+		position: absolute;
+		top: 50%;
+		translate: 0 -50%;
+		padding: 0.25rem;
+		border-radius: 9999px;
+		background: rgb(255 255 255 / 0.8);
+	}
+	.galerie-modale__panneau {
+		display: flex;
+		flex-direction: column;
+		flex: 0 0 auto;
+		min-height: 0;
+	}
+	.galerie-modale__entete,
+	.galerie-modale__pied {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 1rem 1.25rem;
+	}
+	.galerie-modale__entete {
+		border-bottom: 1px solid var(--color-base-200, #d1d1d1);
+	}
+	.galerie-modale__pied {
+		gap: 1.5rem;
+		border-top: 1px solid var(--color-base-200, #d1d1d1);
+	}
+	.galerie-modale__texte {
+		flex: 1 1 auto;
+		overflow-y: auto;
+		padding: 1.25rem;
+	}
+	@media (min-width: 768px) {
+		.galerie-modale__contenu {
+			flex-direction: row;
+			height: min(100% - 6rem, 40rem);
+			overflow: hidden;
+		}
+		.galerie-modale__diapo :is(img, video) {
+			max-height: 100%;
+		}
+		.galerie-modale__panneau {
+			width: 22rem;
+		}
+	}
+</style>
