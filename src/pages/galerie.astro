@@ -102,9 +102,9 @@ const dateLongue = (iso: string) =>
 
 		<ul class="mx-auto mt-10 grid max-w-6xl grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
 			{
-				tuilesManuelles.map((t) => (
+				tuilesManuelles.map((t, i) => (
 					<li>
-						<a href={t.lien} class="group bg-primary-100 block aspect-square overflow-hidden">
+						<a href={t.lien} data-galerie-ouvrir={i} class="group bg-primary-100 block aspect-square overflow-hidden">
 							<Image
 								src={t.image}
 								alt={t.alt}
@@ -120,7 +120,7 @@ const dateLongue = (iso: string) =>
 					<li>
 						<button
 							type="button"
-							data-galerie-ouvrir={i}
+							data-galerie-ouvrir={tuilesManuelles.length + i}
 							aria-label={`Voir la publication Instagram du ${dateLongue(p.timestamp)}`}
 							class="group bg-primary-100 relative block aspect-square w-full cursor-pointer overflow-hidden"
 						>
@@ -149,8 +149,8 @@ const dateLongue = (iso: string) =>
 	</div>
 
 	{
-		profil && publications.length > 0 && (
-			<dialog id="galerie-modale" class="galerie-modale" aria-label="Publication Instagram">
+		tuilesManuelles.length + publications.length > 0 && (
+			<dialog id="galerie-modale" class="galerie-modale" aria-label="Galerie">
 				<button type="button" data-galerie-fermer class="galerie-modale__fermer" aria-label="Fermer">
 					<Icon name="tabler:x" class="size-8" />
 				</button>
@@ -161,8 +161,23 @@ const dateLongue = (iso: string) =>
 					<Icon name="tabler:chevron-right" class="size-10" />
 				</button>
 
-				{publications.map((p, i) => (
-					<article data-galerie-publication={i} hidden class="galerie-modale__contenu">
+				{tuilesManuelles.map((t) => (
+					<article data-galerie-publication hidden class="galerie-modale__contenu">
+						<div class="galerie-modale__media">
+							<div class="galerie-modale__diapos">
+								<div class="galerie-modale__diapo">
+									<Image src={t.image} alt={t.alt} width={1080} loading="lazy" />
+								</div>
+							</div>
+						</div>
+						<aside class="galerie-modale__panneau galerie-modale__panneau--creation">
+							<Button href={t.lien}>Voir cette création</Button>
+						</aside>
+					</article>
+				))}
+
+				{profil && publications.map((p) => (
+					<article data-galerie-publication hidden class="galerie-modale__contenu">
 						<div class="galerie-modale__media">
 							<div class="galerie-modale__diapos" data-galerie-diapos>
 								{p.slides.map((s) =>
@@ -276,7 +291,8 @@ const dateLongue = (iso: string) =>
 		};
 
 		document.querySelectorAll<HTMLElement>("[data-galerie-ouvrir]").forEach((b) =>
-			b.addEventListener("click", () => {
+			b.addEventListener("click", (e) => {
+				e.preventDefault(); // les tuiles manuelles restent des liens vers la création sans JS
 				modale.showModal(); // avant afficher() : une vidéo dans une modale fermée ne démarre pas
 				afficher(Number(b.dataset.galerieOuvrir));
 			}),
@@ -403,6 +419,11 @@ const dateLongue = (iso: string) =>
 		flex-direction: column;
 		flex: 0 0 auto;
 		min-height: 0;
+	}
+	.galerie-modale__panneau--creation {
+		align-items: center;
+		justify-content: center;
+		padding: 1.5rem 1.25rem;
 	}
 	.galerie-modale__entete,
 	.galerie-modale__pied {
