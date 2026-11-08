@@ -5,7 +5,7 @@ heroImage: ./banc-de-poissons-dans-l-eau.webp
 cardImage: ./banc-de-poissons-dans-l-eau.webp
 date: "Janvier 2025"
 datePublication: "20250217" # AAAAMMJJ
-technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
+technique: Broderie d'or, cannetille, jaseron, tissu wax du Sénégal
 images:
   [
     [./poisson-1.webp, ./poisson-2.webp],

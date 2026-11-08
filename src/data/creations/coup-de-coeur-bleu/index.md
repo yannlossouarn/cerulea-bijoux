@@ -5,7 +5,7 @@ heroImage: ./coup-de-coeur-bleu-dans-boite-paysage.webp
 cardImage: ./coup-de-coeur-bleu-avec-boite-carre.webp
 date: "Avril 2025"
 datePublication: "20250413" # AAAAMMJJ
-technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
+technique: Broderie d'or, cannetille, jaseron, tissu wax du Sénégal
 images:
   [
     [./coup-de-coeur-bleu-avec-boite-carre.webp, ./coup-de-coeur-bleu-dans-boite-plan-serre-carre.webp],

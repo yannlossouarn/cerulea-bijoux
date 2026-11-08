@@ -5,7 +5,7 @@ heroImage: ./ban-poissons-bleus-paysage.webp
 cardImage: ./ban-poissons-bleus.webp
 date: "Mars 2025"
 datePublication: "20250331" # AAAAMMJJ
-technique: Broderie d'or, canetille, jaseron, tissu wax du Sénégal
+technique: Broderie d'or, cannetille, jaseron, tissu wax du Sénégal
 images:
   [
     [./ban-poissons-boite.webp, ./ban-poissons-bleus.webp],

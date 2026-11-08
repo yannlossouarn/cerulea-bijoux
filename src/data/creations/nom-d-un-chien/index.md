@@ -5,7 +5,7 @@ heroImage: ./nom-d-un-chien-orange-paysage.webp
 cardImage: ./nom-d-un-chien-orange.webp
 date: "Avril 2025"
 datePublication: "20250416" # AAAAMMJJ
-technique: Broderie d'or, canetille, jaseron, nacre, tissu wax du Sénégal
+technique: Broderie d'or, cannetille, jaseron, nacre, tissu wax du Sénégal
 images:
   [
     [./nom-d-un-chien-bleu.avif, ./nom-d-un-chien-orange.webp,],

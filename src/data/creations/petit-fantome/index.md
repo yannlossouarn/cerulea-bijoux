@@ -5,7 +5,7 @@ heroImage: ./petit-fantome-paysage2.webp
 cardImage: ./petit-fantome.webp
 date: "Octobre 2026"
 datePublication: "20261020" # AAAAMMJJ
-technique: Broderie d'or, canetille, jaseron, feutrine de laine
+technique: Broderie d'or, cannetille, jaseron, feutrine de laine
 images:
   [
     [./petit-fantome.webp, ./petit-fantome-banane.webp, ./petit-fantome-veste.webp],

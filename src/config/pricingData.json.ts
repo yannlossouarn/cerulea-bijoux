@@ -64,7 +64,7 @@ const pricingData: pricingItem[] = [
 		featured: true,
 		price: 10,
 		features: [
-			"Broderie d'or : canetille et jaseron",
+			"Broderie d'or : cannetille et jaseron",
 			"Montage en pin's",
 			"Livré dans sa boîte décorée à la main",
 		],
@@ -78,7 +78,7 @@ const pricingData: pricingItem[] = [
 		featured: false,
 		price: 25,
 		features: [
-			"Broderie d'or : canetille et jaseron",
+			"Broderie d'or : cannetille et jaseron",
 			"Envers en tissu wax du Sénégal",
 			"Livrée dans sa boîte décorée à la main",
 		],
