@@ -317,6 +317,11 @@ const dateLongue = (iso: string) =>
 			b.addEventListener("click", () => {
 				const video = b.parentElement!.querySelector("video")!;
 				video.muted = !video.muted;
+				// Firefox Android ne rend pas audible une vidéo démarrée muette : on relance la lecture dans le geste de l'utilisateur
+				if (!video.muted) {
+					video.pause();
+					video.play().catch(() => {});
+				}
 				b.setAttribute("aria-label", video.muted ? "Activer le son" : "Couper le son");
 				b.querySelector("[data-son-coupe]")!.classList.toggle("hidden", !video.muted);
 				b.querySelector("[data-son-actif]")!.classList.toggle("hidden", video.muted);
