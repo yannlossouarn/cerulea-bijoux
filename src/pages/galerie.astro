@@ -62,6 +62,14 @@ const publications = (
 	)
 ).filter((p) => p !== null);
 
+// en alternance : publication Instagram la plus récente (l'API les renvoie de la plus récente à la plus ancienne), puis entrée manuelle d'ordre le plus petit, etc.
+const tuiles = Array.from({ length: Math.max(publications.length, tuilesManuelles.length) }, (_, i) => [
+	publications[i] && { publication: publications[i] },
+	tuilesManuelles[i] && { manuelle: tuilesManuelles[i] },
+])
+	.flat()
+	.filter((t) => t !== undefined);
+
 const avatar = await locale(profil?.profile_picture_url, 160);
 const lignes = (t: string) => t.split("\n");
 const nombre = (n?: number) => new Intl.NumberFormat("fr-FR").format(n ?? 0);
@@ -102,25 +110,28 @@ const dateLongue = (iso: string) =>
 
 		<ul class="mx-auto mt-10 grid max-w-6xl grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
 			{
-				tuilesManuelles.map((t, i) => (
-					<li>
-						<a href={t.lien} data-galerie-ouvrir={i} class="group bg-primary-100 block aspect-square overflow-hidden">
-							<Image
-								src={t.image}
-								alt={t.alt}
-								width={600}
-								class="h-full w-full object-cover transition group-hover:opacity-80"
-							/>
-						</a>
-					</li>
-				))
-			}
-			{
-				publications.map((p, i) => (
+				tuiles.map((tuile, i) => {
+					if ("manuelle" in tuile) {
+						const t = tuile.manuelle;
+						return (
+							<li>
+								<a href={t.lien} data-galerie-ouvrir={i} class="group bg-primary-100 block aspect-square overflow-hidden">
+									<Image
+										src={t.image}
+										alt={t.alt}
+										width={600}
+										class="h-full w-full object-cover transition group-hover:opacity-80"
+									/>
+								</a>
+							</li>
+						);
+					}
+					const p = tuile.publication;
+					return (
 					<li>
 						<button
 							type="button"
-							data-galerie-ouvrir={tuilesManuelles.length + i}
+							data-galerie-ouvrir={i}
 							aria-label={`Voir la publication Instagram du ${dateLongue(p.timestamp)}`}
 							class="group bg-primary-100 relative block aspect-square w-full cursor-pointer overflow-hidden"
 						>
@@ -139,7 +150,8 @@ const dateLongue = (iso: string) =>
 							)}
 						</button>
 					</li>
-				))
+					);
+				})
 			}
 		</ul>
 
@@ -161,7 +173,10 @@ const dateLongue = (iso: string) =>
 					<Icon name="tabler:chevron-right" class="size-10" />
 				</button>
 
-				{tuilesManuelles.map((t) => (
+				{tuiles.map((tuile) => {
+					if ("manuelle" in tuile) {
+						const t = tuile.manuelle;
+						return (
 					<article data-galerie-publication hidden class="galerie-modale__contenu">
 						<div class="galerie-modale__media">
 							<div class="galerie-modale__diapos">
@@ -174,9 +189,10 @@ const dateLongue = (iso: string) =>
 							<Button href={t.lien}>Voir cette création</Button>
 						</aside>
 					</article>
-				))}
-
-				{profil && publications.map((p) => (
+						);
+					}
+					const p = tuile.publication;
+					return profil && (
 					<article data-galerie-publication hidden class="galerie-modale__contenu">
 						<div class="galerie-modale__media">
 							<div class="galerie-modale__diapos" data-galerie-diapos>
@@ -253,7 +269,8 @@ const dateLongue = (iso: string) =>
 							</div>
 						</aside>
 					</article>
-				))}
+					);
+				})}
 			</dialog>
 		)
 	}
