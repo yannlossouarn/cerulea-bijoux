@@ -63,10 +63,10 @@ const publications = (
 ).filter((p) => p !== null);
 
 // en alternance : publication Instagram la plus récente (l'API les renvoie de la plus récente à la plus ancienne), puis entrée manuelle d'ordre le plus petit, etc.
-const tuiles = Array.from({ length: Math.max(publications.length, tuilesManuelles.length) }, (_, i) => [
-	publications[i] && { publication: publications[i] },
-	tuilesManuelles[i] && { manuelle: tuilesManuelles[i] },
-])
+const tuiles = Array.from({ length: Math.max(publications.length, tuilesManuelles.length) }, (_, i) => {
+	const [publication, manuelle] = [publications[i], tuilesManuelles[i]];
+	return [publication && { publication }, manuelle && { manuelle }];
+})
 	.flat()
 	.filter((t) => t !== undefined);
 
@@ -111,11 +111,11 @@ const dateLongue = (iso: string) =>
 		<ul class="mx-auto mt-10 grid max-w-6xl grid-cols-2 gap-2 md:grid-cols-3 md:gap-4">
 			{
 				tuiles.map((tuile, i) => {
-					if ("manuelle" in tuile) {
+					if (tuile.manuelle) {
 						const t = tuile.manuelle;
 						return (
 							<li>
-								<a href={t.lien} data-galerie-ouvrir={i} class="group bg-primary-100 block aspect-square overflow-hidden">
+								<a href={t.lien} data-galerie-ouvrir={i} class="group bg-primary-100 block aspect-[312/414] overflow-hidden">
 									<Image
 										src={t.image}
 										alt={t.alt}
@@ -133,7 +133,7 @@ const dateLongue = (iso: string) =>
 							type="button"
 							data-galerie-ouvrir={i}
 							aria-label={`Voir la publication Instagram du ${dateLongue(p.timestamp)}`}
-							class="group bg-primary-100 relative block aspect-square w-full cursor-pointer overflow-hidden"
+							class="group bg-primary-100 relative block aspect-[312/414] w-full cursor-pointer overflow-hidden"
 						>
 							<img
 								src={p.vignette}
@@ -174,7 +174,7 @@ const dateLongue = (iso: string) =>
 				</button>
 
 				{tuiles.map((tuile) => {
-					if ("manuelle" in tuile) {
+					if (tuile.manuelle) {
 						const t = tuile.manuelle;
 						return (
 					<article data-galerie-publication hidden class="galerie-modale__contenu">
